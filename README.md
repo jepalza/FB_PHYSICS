@@ -1,5 +1,5 @@
 # FB_PHYSICS
-FreeBasic Fisicas en tiempo real para juegos 2D
+FreeBasic Físicas en tiempo real para juegos 2D
 
 Motor de físicas 2D en tiempo real, útil para juegos tipo "Pinball" o plataformas.
 
