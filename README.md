@@ -15,6 +15,7 @@ https://www.maartenbaert.be/extremephysics/
 
 Cosas a reparar:
  -creación/control de polígonos
+ 
  -mejor control de elementos con el ratón
 
  ![Imagen fb_extremephysics.png](https://github.com/jepalza/FB_PHYSICS/blob/main/pantallazo/fb_extremephysics.png)
