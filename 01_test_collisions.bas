@@ -220,10 +220,65 @@ shape = ep_shape_create_polygon(world,body,poly_octagon,0,0,0,0)
 	ep_shape_set_material(world,body,shape,0,0.5,0,0)
 	ep_body_set_position(world,body,xx+48,yy,degtorad(0))
 
-
+' -------------------------------------------
+'  variables para control de entidades mediante el raton
+	Dim As Double b,s,d
+	Dim As Double vx,vy
+	Dim shared as double mousebody, mousehingejoint ' creacion de puntero de raton como entidad real
+	Dim Shared As Integer mouse_x, mouse_y, mouse_b
+	
+	' creacion de puntero del raton como entidad "body"
+	mousebody = ep_body_create_static(world)
+	mousehingejoint = -1.0 ' si hemos capturado un elemento con el raton o no (-1=capturado)
+' ---------------------------------------------
 
 Dim As Integer a
 While InKey=""
+
+
+	' -------------- EXCLUSIVO GRUPO PARA CONTROL DE ENTIDADES CON EL RATON ---------------
+		GetMouse(mouse_x, mouse_y, , mouse_b)
+		
+		If inkey = Chr(27) then
+			Exit While
+		ElseIf mouse_b=1 Then
+			' al picar con el raton sobre un "body" o "caja", la recoje y podemos jugar con ella
+			if ep_world_collision_test_circle(world, 0, mouse_x, mouse_y, 0, 1, 1, 0) > 0 then
+				b = ep_world_get_collision_body(world, 0)
+				s = ep_world_get_collision_shape(world, 0)
+				' debemos evitar que se vayan creando mas de un "mousehingejoint" si se 
+				' mantiene el boton del raton presionado, por que se "cuelga"
+				' para ello, empleamos "mousehingejoint=-1"
+				if ep_body_is_static(world, b)=0 AndAlso mousehingejoint=-1 Then
+					xx = ep_body_coord_world_to_local_x(world, b, mouse_x, mouse_y)
+					yy = ep_body_coord_world_to_local_y(world, b, mouse_x, mouse_y)
+					mousehingejoint = ep_hingejoint_create(world, b, mousebody, xx, yy, 0, 0, 0)
+					ep_hingejoint_set_max_force(world, mousehingejoint, 10000)
+				endif
+			endif
+		ElseIf mouse_b=0 Then
+			' al soltar el boton del raton, se destruye la entidad "mousehingejoint" 
+			' y el objeto que tuvieramos "agarrado", se suelta y cae con su gravedad
+			If mousehingejoint <> -1.0 Then
+				ep_hingejoint_destroy(world, mousehingejoint)
+				mousehingejoint = -1.0
+			EndIf
+		endif
+	
+		' arrastramos un objeto con el raton
+		vx = mouse_x - ep_body_get_x_center(world, mousebody)
+		vy = mouse_y - ep_body_get_y_center(world, mousebody)
+		if mousehingejoint <> -1.0 then
+			d = Sqr(vx * vx + vy * vy)
+			if d > 10 then
+				vx *= 10 / d
+				vy *= 10 / d
+			endif
+		endif
+		
+		ep_body_set_velocity_center(world, mousebody, vx, vy, 0)
+	' -------------- EXCLUSIVO GRUPO PARA CONTROL DE ENTIDADES CON EL RATON ---------------
+
 
 	a=0
 	While a<4
