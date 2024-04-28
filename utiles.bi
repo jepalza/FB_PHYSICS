@@ -167,7 +167,7 @@ Sub EP_poli(world As Double, body As Double, pol As poligonos, tipo As Byte, c A
 	y= ep_body_get_y(world,body)
 	centx= ep_body_get_x_center(world,body)
 	centy= ep_body_get_y_center(world,body)
-	tmpv=pol.v-0
+	tmpv=pol.v-1
 	For v=0 To tmpv
 		x1=pol.xv(v)
 		y1=pol.yv(v)
